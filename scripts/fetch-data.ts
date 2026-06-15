@@ -29,8 +29,12 @@ if (!TOKEN) {
   process.exit(1);
 }
 
-if (CLAN_TAG === "#PLACEHOLDER") {
-  console.error("CLAN_TAG is still the placeholder. Set it in .env (e.g. CLAN_TAG=#2P0LYQ).");
+if (CLAN_TAG === "#PLACEHOLDER" || CLAN_TAG.replace(/^#/, "") === "") {
+  console.error(
+    "CLAN_TAG is missing or still the placeholder.\n" +
+      'In .env it MUST be quoted, e.g. CLAN_TAG="#2P0LYQ" — an unquoted leading\n' +
+      "# is read as a comment and the tag comes through empty.",
+  );
   process.exit(1);
 }
 

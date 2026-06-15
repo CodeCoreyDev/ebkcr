@@ -6,7 +6,7 @@
     "build": "tsr generate && tsc --noEmit && vite build",
     "check": "oxfmt --check && oxlint",
     "dev": "vite dev --host --port 3000",
-    "fetch-data": "tsx scripts/fetch-data.ts",
+    "fetch-data": "tsx --env-file-if-exists=.env scripts/fetch-data.ts",
     "fix": "oxlint --fix && oxfmt .",
     "format": "oxfmt .",
     "lint": "oxlint",
