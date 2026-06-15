@@ -50,7 +50,8 @@ Other scripts: `pnpm build`, `pnpm preview`, `pnpm check` (lint+format),
 Deploys are handled by `.github/workflows/deploy.yml`, which runs on:
 
 - every push to `main`,
-- a **weekly schedule** (Mondays 12:00 UTC), and
+- a **daily schedule** at 10:30 UTC — 30 min after Clash Royale's daily war
+  reset (10:00 UTC / 6:00 AM EDT), so standings have settled before we pull, and
 - manual trigger (Actions tab → "Run workflow").
 
 Each run re-fetches clan data, builds, and publishes to GitHub Pages.
