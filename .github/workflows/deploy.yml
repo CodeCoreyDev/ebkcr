@@ -1,0 +1,64 @@
+name: Build & Deploy
+
+on:
+  # Manual "Run workflow" button in the Actions tab.
+  workflow_dispatch:
+  # Weekly refresh — Mondays 12:00 UTC. Cron uses UTC.
+  schedule:
+    - cron: "0 12 * * 1"
+  # Redeploy on code changes pushed to main.
+  push:
+    branches: [main]
+
+# Allow the workflow to publish to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; let the newest run win.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # secrets can't be used in `if:` directly, so surface presence via env.
+    env:
+      CR_API_TOKEN: ${{ secrets.CR_API_TOKEN }}
+      CLAN_TAG: ${{ vars.CLAN_TAG }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Pull fresh clan data from the Clash Royale API into src/data/*.json.
+      # Skipped automatically if no token is configured (e.g. before setup),
+      # so the build still succeeds using the committed seed data.
+      - name: Fetch clan data
+        if: ${{ env.CR_API_TOKEN != '' }}
+        run: pnpm fetch-data
+
+      - run: pnpm build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

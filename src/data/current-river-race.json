@@ -1,0 +1,16 @@
+{
+  "state": "full",
+  "clan": {
+    "tag": "#PLACEHOLDER",
+    "name": "EBK",
+    "badgeId": 16000000,
+    "fame": 0,
+    "repairPoints": 0,
+    "participants": [],
+    "periodPoints": 0,
+    "clanScore": 0
+  },
+  "clans": [],
+  "periodType": "warDay",
+  "periodIndex": 0
+}

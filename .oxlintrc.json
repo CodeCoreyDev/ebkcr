@@ -1,0 +1,23 @@
+{
+  "$schema": "https://oxc.rs/schemas/oxlint/latest.json",
+  "plugins": ["import"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off",
+    "style": "off",
+    "restriction": "off"
+  },
+  "rules": {
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ],
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+    "import/no-unassigned-import": "off"
+  },
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/routeTree.gen.ts"]
+}

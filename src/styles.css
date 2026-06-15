@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Dark, Clash-Royale-flavored theme: deep navy field, gold + arena-blue accents. */
+@theme {
+  --color-field: #0b1220;
+  --color-field-soft: #0f1729;
+  --color-card: #131c30;
+  --color-card-border: #233149;
+  --color-ink: #e6ecf5;
+  --color-ink-muted: #93a1b8;
+  --color-gold: #f2c14e;
+  --color-gold-soft: #f7d98a;
+  --color-arena: #3aa0ff;
+  --color-victory: #4ade80;
+  --color-defeat: #f87171;
+
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1a2a47 0%, transparent 60%), var(--color-field);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-field);
+  }
+}

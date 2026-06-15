@@ -1,0 +1,54 @@
+{
+  "tag": "#PLACEHOLDER",
+  "name": "EBK",
+  "type": "inviteOnly",
+  "description": "Placeholder clan data. Run `pnpm fetch-data` with your API token to replace this with live data from the Clash Royale API.",
+  "badgeId": 16000000,
+  "clanScore": 0,
+  "clanWarTrophies": 0,
+  "requiredTrophies": 0,
+  "donationsPerWeek": 0,
+  "clanChestStatus": "inactive",
+  "members": 3,
+  "memberList": [
+    {
+      "tag": "#AAA0",
+      "name": "Sample Leader",
+      "role": "leader",
+      "lastSeen": "20260615T120000.000Z",
+      "expLevel": 50,
+      "trophies": 7000,
+      "arena": { "id": 54000018, "name": "Legendary Arena" },
+      "clanRank": 1,
+      "previousClanRank": 1,
+      "donations": 320,
+      "donationsReceived": 120
+    },
+    {
+      "tag": "#BBB0",
+      "name": "Sample Co-Leader",
+      "role": "coLeader",
+      "lastSeen": "20260615T100000.000Z",
+      "expLevel": 47,
+      "trophies": 6600,
+      "arena": { "id": 54000017, "name": "Royal Arena" },
+      "clanRank": 2,
+      "previousClanRank": 3,
+      "donations": 280,
+      "donationsReceived": 200
+    },
+    {
+      "tag": "#CCC0",
+      "name": "Sample Member",
+      "role": "member",
+      "lastSeen": "20260614T180000.000Z",
+      "expLevel": 40,
+      "trophies": 5800,
+      "arena": { "id": 54000016, "name": "Master Arena" },
+      "clanRank": 3,
+      "previousClanRank": 2,
+      "donations": 40,
+      "donationsReceived": 320
+    }
+  ]
+}

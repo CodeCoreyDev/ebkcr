@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#0b1220" />
+  <path
+    d="M16 4l9 3v8c0 6-3.8 9.6-9 13-5.2-3.4-9-7-9-13V7l9-3z"
+    fill="none"
+    stroke="#f2c14e"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  <text x="16" y="20" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#f2c14e" text-anchor="middle">EBK</text>
+</svg>

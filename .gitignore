@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+
+# TanStack Router generated route tree
+src/routeTree.gen.ts
+
+# Local env (API token lives here for local fetches — never commit it)
+.env
+.env.local
+*.local
