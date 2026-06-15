@@ -2,6 +2,7 @@
   "name": "ebkcr",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.14.0",
   "scripts": {
     "build": "tsr generate && tsc --noEmit && vite build",
     "check": "oxfmt --check && oxlint",
