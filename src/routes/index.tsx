@@ -18,7 +18,7 @@ function Overview() {
     <div className="flex flex-col gap-8">
       <section className="flex flex-col items-center gap-3 text-center">
         <div className="border-gold/30 bg-gold/10 text-gold flex size-20 items-center justify-center rounded-2xl border text-3xl font-black">
-          {clan.name.slice(0, 3).toUpperCase()}
+          {clan.name.slice(0, 5).toUpperCase()}
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight">{clan.name}</h1>
