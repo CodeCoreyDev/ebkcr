@@ -68,7 +68,7 @@ function SortableTh({
 
 function WarHistory() {
   const { columns, players, maxCellFame } = useMemo(() => buildWarHistory(), []);
-  const [mode, setMode] = useState<Mode>("decks");
+  const [mode, setMode] = useState<Mode>("medals");
   const [currentOnly, setCurrentOnly] = useState(true);
   const [sort, setSort] = useState<WarSortKey>("totalFame");
   const [desc, setDesc] = useState(true);
@@ -109,7 +109,7 @@ function WarHistory() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <div className="bg-field-soft/60 border-card-border inline-flex rounded-lg border p-0.5 text-sm font-medium">
-            {(["decks", "medals"] as const).map((m) => (
+            {(["medals", "decks"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
