@@ -1,7 +1,33 @@
 @import "tailwindcss";
 
-/* Dark, Clash-Royale-flavored theme: deep navy field, gold + arena-blue accents. */
+/*
+ * Clash-Royale-flavored theming. LIGHT is the default; adding the `dark` class
+ * to <html> flips every semantic token below. Components only ever reference the
+ * semantic utilities (bg-field, text-ink, …), so the whole UI re-skins purely by
+ * swapping these custom properties — no `dark:` variants needed anywhere.
+ */
 @theme {
+  /* Light theme (default): bright arena — airy blue-white field, ink navy text. */
+  --color-field: #eef3fa;
+  --color-field-soft: #e2e9f4;
+  --color-card: #ffffff;
+  --color-card-border: #d3ddec;
+  --color-ink: #16203a;
+  --color-ink-muted: #5a6b86;
+  --color-gold: #b07d12;
+  --color-gold-soft: #916312;
+  --color-arena: #1a7fd4;
+  --color-victory: #15a34a;
+  --color-defeat: #dc2626;
+
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Dark theme overrides. Selector is `html.dark` (specificity beats the :root that
+ * @theme emits) so these win the cascade; custom properties then inherit down.
+ */
+html.dark {
   --color-field: #0b1220;
   --color-field-soft: #0f1729;
   --color-card: #131c30;
@@ -13,19 +39,25 @@
   --color-arena: #3aa0ff;
   --color-victory: #4ade80;
   --color-defeat: #f87171;
-
-  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
-  html {
+  :root {
+    color-scheme: light;
+    /* Soft radial glow behind the page, tuned per theme. */
+    --bg-glow: #cddffb;
+  }
+
+  html.dark {
     color-scheme: dark;
+    --bg-glow: #1a2a47;
   }
 
   body {
     margin: 0;
     background:
-      radial-gradient(1200px 600px at 50% -10%, #1a2a47 0%, transparent 60%), var(--color-field);
+      radial-gradient(1200px 600px at 50% -10%, var(--bg-glow) 0%, transparent 60%),
+      var(--color-field);
     color: var(--color-ink);
     font-family: var(--font-display);
     -webkit-font-smoothing: antialiased;
