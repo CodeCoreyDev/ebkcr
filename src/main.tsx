@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { DataProvider } from "@/lib/clash-data";
+import { ThemeProvider } from "@/lib/theme";
 
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
@@ -23,9 +24,11 @@ const rootElement = document.getElementById("root");
 if (rootElement && !rootElement.innerHTML) {
   createRoot(rootElement).render(
     <StrictMode>
-      <DataProvider>
-        <RouterProvider router={router} />
-      </DataProvider>
+      <ThemeProvider>
+        <DataProvider>
+          <RouterProvider router={router} />
+        </DataProvider>
+      </ThemeProvider>
     </StrictMode>,
   );
 }

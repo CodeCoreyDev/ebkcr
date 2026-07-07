@@ -1,8 +1,9 @@
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
-import { Shield } from "lucide-react";
+import { Moon, Shield, Sun } from "lucide-react";
 
 import { formatFetchedAt, formatRelativeTime } from "@/lib/clash";
 import { useClashData } from "@/lib/clash-data";
+import { useTheme } from "@/lib/theme";
 
 function NavLink({ to, label }: { to: string; label: string }) {
   return (
@@ -58,6 +59,22 @@ function Freshness() {
   return <span>Data updated {formatFetchedAt(data.meta.fetchedAt)}</span>;
 }
 
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const isDark = theme === "dark";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="text-ink-muted hover:text-ink hover:bg-field-soft flex size-8 items-center justify-center rounded-lg transition-colors"
+    >
+      {isDark ? <Sun className="size-4.5" /> : <Moon className="size-4.5" />}
+    </button>
+  );
+}
+
 function RootLayout() {
   const { data } = useClashData();
   return (
@@ -75,6 +92,7 @@ function RootLayout() {
             <NavLink to="/" label="Overview" />
             <NavLink to="/members" label="Members" />
             <NavLink to="/war" label="Clan War" />
+            <ThemeToggle />
           </nav>
         </div>
       </header>

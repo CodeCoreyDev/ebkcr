@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -9,6 +9,13 @@
       content="Stats, roster, and clan war results for the EBK Clash Royale clan."
     />
     <title>EBK · Clash Royale Clan</title>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash. Light is the
+      // default, so we only add the class when the visitor explicitly chose dark.
+      try {
+        if (localStorage.theme === "dark") document.documentElement.classList.add("dark");
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

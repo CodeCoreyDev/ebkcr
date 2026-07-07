@@ -29,6 +29,8 @@ export interface PlayerRow {
   name: string;
   role: ClanRole | null;
   isCurrentMember: boolean;
+  /** Raw Clash "last seen" timestamp for current members; `null` if they've left. */
+  lastSeen: string | null;
   /** Aligned to `columns`; `null` where the player wasn't in that war. */
   cells: (WarCell | null)[];
   totalFame: number;
@@ -108,6 +110,7 @@ export function buildWarHistory(clan: Clan, riverRaceLog: RiverRaceLogEntry[]): 
           name: p.name,
           role: member?.role ?? null,
           isCurrentMember: Boolean(member),
+          lastSeen: member?.lastSeen ?? null,
           cells: Array.from({ length: columns.length }, () => null),
           totalFame: 0,
           totalDecks: 0,
