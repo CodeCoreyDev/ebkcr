@@ -86,10 +86,26 @@ export interface DataMeta {
   source: string;
 }
 
-export const clan = clanData as unknown as Clan;
-export const currentRiverRace = currentRiverRaceData as unknown as CurrentRiverRace | null;
-export const riverRaceLog = (riverRaceLogData as unknown as { items: RiverRaceLogEntry[] }).items;
-export const meta = metaData as unknown as DataMeta;
+/** The full clan dataset, however it was sourced (build-time seed or live). */
+export interface ClashData {
+  clan: Clan;
+  currentRiverRace: CurrentRiverRace | null;
+  riverRaceLog: RiverRaceLogEntry[];
+  meta: DataMeta;
+}
+
+/**
+ * Seed dataset baked in at build time by `scripts/fetch-data.ts`. The app
+ * renders this instantly on first paint, then the browser refreshes it live
+ * (see `src/lib/clash-data.tsx`). It also remains the fallback if a live fetch
+ * fails or no token is configured.
+ */
+export const seedData: ClashData = {
+  clan: clanData as unknown as Clan,
+  currentRiverRace: currentRiverRaceData as unknown as CurrentRiverRace | null,
+  riverRaceLog: (riverRaceLogData as unknown as { items: RiverRaceLogEntry[] }).items,
+  meta: metaData as unknown as DataMeta,
+};
 
 export const ROLE_LABELS: Record<ClanRole, string> = {
   leader: "Leader",
@@ -139,9 +155,9 @@ export function formatRelativeTime(raw: string): string {
   return `${days}d ago`;
 }
 
-export function formatFetchedAt(): string {
-  if (!meta.fetchedAt) return "seed data (not yet fetched)";
-  const date = new Date(meta.fetchedAt);
+export function formatFetchedAt(fetchedAt: string | null): string {
+  if (!fetchedAt) return "seed data (not yet fetched)";
+  const date = new Date(fetchedAt);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -156,7 +172,7 @@ export interface ClanStats {
   topDonator: ClanMember | null;
 }
 
-export function computeClanStats(): ClanStats {
+export function computeClanStats(clan: Clan): ClanStats {
   const list = clan.memberList;
   const memberCount = list.length;
   const totalDonations = list.reduce((sum, m) => sum + m.donations, 0);

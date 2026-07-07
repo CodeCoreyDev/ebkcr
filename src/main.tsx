@@ -2,6 +2,8 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { DataProvider } from "@/lib/clash-data";
+
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 
@@ -21,7 +23,9 @@ const rootElement = document.getElementById("root");
 if (rootElement && !rootElement.innerHTML) {
   createRoot(rootElement).render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <DataProvider>
+        <RouterProvider router={router} />
+      </DataProvider>
     </StrictMode>,
   );
 }

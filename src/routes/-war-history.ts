@@ -1,8 +1,8 @@
 // Files/dirs prefixed with `-` are excluded from TanStack Router's route tree,
 // so this co-located helper won't become a route. It reshapes the flat
 // river-race log into a per-player × per-war grid for the participation heatmap.
-import { clan, parseClashDate, riverRaceLog } from "@/lib/clash";
-import type { ClanRole } from "@/lib/clash";
+import { parseClashDate } from "@/lib/clash";
+import type { Clan, ClanRole, RiverRaceLogEntry } from "@/lib/clash";
 
 /** A clan war supplies up to 4 decks per day across 4 battle days. */
 export const MAX_DECKS_PER_WAR = 16;
@@ -46,16 +46,32 @@ export interface WarHistory {
   maxCellFame: number;
 }
 
+/** Which metric the heatmap cells (and per-week column sorts) show. */
+export type WarMode = "decks" | "medals";
+
+/**
+ * Aggregate-column sort keys, or `col:N` to sort by a single war week (column
+ * index N in the displayed order). A per-week sort uses whichever metric the
+ * current `WarMode` is showing.
+ */
 export type WarSortKey =
   | "name"
   | "warsPlayed"
   | "totalDecks"
   | "avgDecks"
   | "totalFame"
-  | "avgFame";
+  | "avgFame"
+  | `col:${number}`;
+
+/** The numeric value a cell contributes under the given mode. */
+function cellValue(cell: WarCell | null, mode: WarMode): number {
+  // Missing weeks sink below any played week (incl. a zero-fame/zero-deck one).
+  if (!cell) return -1;
+  return mode === "decks" ? cell.decksUsed : cell.fame;
+}
 
 /** Build the player × war grid from the river-race log. */
-export function buildWarHistory(): WarHistory {
+export function buildWarHistory(clan: Clan, riverRaceLog: RiverRaceLogEntry[]): WarHistory {
   // Oldest war on the left, newest on the right — a natural timeline.
   const entries = [...riverRaceLog].sort((a, b) =>
     a.seasonId !== b.seasonId ? a.seasonId - b.seasonId : a.sectionIndex - b.sectionIndex,
@@ -129,10 +145,25 @@ export function buildWarHistory(): WarHistory {
   return { columns, players, maxCellFame };
 }
 
-export function sortPlayers(players: PlayerRow[], key: WarSortKey, desc: boolean): PlayerRow[] {
+export function sortPlayers(
+  players: PlayerRow[],
+  key: WarSortKey,
+  desc: boolean,
+  mode: WarMode,
+): PlayerRow[] {
   const dir = desc ? -1 : 1;
   return [...players].sort((a, b) => {
-    const cmp = key === "name" ? a.name.localeCompare(b.name) : a[key] - b[key];
+    let cmp: number;
+    if (key === "name") {
+      cmp = a.name.localeCompare(b.name);
+    } else if (key.startsWith("col:")) {
+      const idx = Number(key.slice(4));
+      cmp = cellValue(a.cells[idx] ?? null, mode) - cellValue(b.cells[idx] ?? null, mode);
+    } else {
+      // Remaining keys are the numeric aggregate columns.
+      const k = key as "warsPlayed" | "totalDecks" | "avgDecks" | "totalFame" | "avgFame";
+      cmp = a[k] - b[k];
+    }
     // Stable tiebreak by name so equal rows don't shuffle between renders.
     return (cmp || a.name.localeCompare(b.name)) * dir;
   });

@@ -2,13 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { History, Swords } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { currentRiverRace, formatNumber, parseClashDate, riverRaceLog } from "@/lib/clash";
+import { formatNumber, parseClashDate } from "@/lib/clash";
+import type { CurrentRiverRace, RiverRaceLogEntry } from "@/lib/clash";
+import { useClashData } from "@/lib/clash-data";
 
 export const Route = createFileRoute("/war/")({
   component: War,
 });
 
-function CurrentRace() {
+function CurrentRace({ currentRiverRace }: { currentRiverRace: CurrentRiverRace | null }) {
   if (!currentRiverRace || currentRiverRace.clans.length === 0) {
     return (
       <Card>
@@ -52,7 +54,13 @@ function CurrentRace() {
   );
 }
 
-function WarLog() {
+function WarLog({
+  riverRaceLog,
+  currentRiverRace,
+}: {
+  riverRaceLog: RiverRaceLogEntry[];
+  currentRiverRace: CurrentRiverRace | null;
+}) {
   if (riverRaceLog.length === 0) {
     return (
       <Card>
@@ -104,14 +112,15 @@ function WarLog() {
 }
 
 function War() {
+  const { data } = useClashData();
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
         <Swords className="text-gold size-6" />
         <h1 className="text-2xl font-black tracking-tight">Clan War</h1>
       </div>
-      <CurrentRace />
-      <WarLog />
+      <CurrentRace currentRiverRace={data.currentRiverRace} />
+      <WarLog riverRaceLog={data.riverRaceLog} currentRiverRace={data.currentRiverRace} />
     </div>
   );
 }

@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 
 import { RoleBadge } from "@/components/role-badge";
 import { Card } from "@/components/ui/card";
-import { clan, formatNumber, formatRelativeTime } from "@/lib/clash";
+import { formatNumber, formatRelativeTime } from "@/lib/clash";
+import { useClashData } from "@/lib/clash-data";
 import { TABLE_COLUMNS, sortMembers } from "@/routes/-members-table";
 import type { SortKey } from "@/routes/-members-table";
 
@@ -22,10 +23,15 @@ function RankDelta({ rank, prev }: { rank: number; prev: number }) {
 }
 
 function Members() {
+  const { data } = useClashData();
+  const { clan } = data;
   const [sort, setSort] = useState<SortKey>("clanRank");
   const [desc, setDesc] = useState(false);
 
-  const members = useMemo(() => sortMembers(clan.memberList, sort, desc), [sort, desc]);
+  const members = useMemo(
+    () => sortMembers(clan.memberList, sort, desc),
+    [clan.memberList, sort, desc],
+  );
 
   function toggleSort(key: SortKey) {
     if (key === sort) {

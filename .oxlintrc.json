@@ -17,7 +17,8 @@
       }
     ],
     "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
-    "import/no-unassigned-import": "off"
+    "import/no-unassigned-import": "off",
+    "no-underscore-dangle": "off"
   },
   "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/routeTree.gen.ts"]
 }

@@ -4,14 +4,17 @@ import { Coins, Crown, Trophy, Users } from "lucide-react";
 import { RoleBadge } from "@/components/role-badge";
 import { StatCard } from "@/components/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { clan, computeClanStats, formatNumber } from "@/lib/clash";
+import { computeClanStats, formatNumber } from "@/lib/clash";
+import { useClashData } from "@/lib/clash-data";
 
 export const Route = createFileRoute("/")({
   component: Overview,
 });
 
 function Overview() {
-  const stats = computeClanStats();
+  const { data } = useClashData();
+  const { clan } = data;
+  const stats = computeClanStats(clan);
   const topMembers = [...clan.memberList].sort((a, b) => a.clanRank - b.clanRank).slice(0, 5);
 
   return (

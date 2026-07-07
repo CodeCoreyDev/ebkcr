@@ -5,14 +5,15 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatNumber, ROLE_LABELS } from "@/lib/clash";
+import { useClashData } from "@/lib/clash-data";
 import { buildWarHistory, MAX_DECKS_PER_WAR, sortPlayers } from "@/routes/-war-history";
-import type { PlayerRow, WarCell, WarSortKey } from "@/routes/-war-history";
+import type { PlayerRow, WarCell, WarMode, WarSortKey } from "@/routes/-war-history";
 
 export const Route = createFileRoute("/war/history")({
   component: WarHistory,
 });
 
-type Mode = "decks" | "medals";
+type Mode = WarMode;
 
 // Heatmap accent per mode: arena-blue for deck usage, gold for medals earned.
 const ACCENT: Record<Mode, string> = { decks: "58,160,255", medals: "242,193,78" };
@@ -67,7 +68,11 @@ function SortableTh({
 }
 
 function WarHistory() {
-  const { columns, players, maxCellFame } = useMemo(() => buildWarHistory(), []);
+  const { data } = useClashData();
+  const { columns, players, maxCellFame } = useMemo(
+    () => buildWarHistory(data.clan, data.riverRaceLog),
+    [data.clan, data.riverRaceLog],
+  );
   const [mode, setMode] = useState<Mode>("medals");
   const [currentOnly, setCurrentOnly] = useState(true);
   const [sort, setSort] = useState<WarSortKey>("totalFame");
@@ -77,7 +82,9 @@ function WarHistory() {
     () => (currentOnly ? players.filter((p) => p.isCurrentMember) : players),
     [players, currentOnly],
   );
-  const sorted = useMemo(() => sortPlayers(visible, sort, desc), [visible, sort, desc]);
+  // Per-week (col:N) sorts read the metric for the active mode, so re-sort when
+  // the mode toggles too.
+  const sorted = useMemo(() => sortPlayers(visible, sort, desc, mode), [visible, sort, desc, mode]);
 
   function toggleSort(key: WarSortKey) {
     if (key === sort) {
@@ -160,16 +167,28 @@ function WarHistory() {
                   onClick={() => toggleSort("name")}
                 />
               </th>
-              {columns.map((col) => (
-                <th
-                  key={col.key}
-                  className="border-card-border border-b px-1.5 py-2 text-center font-medium"
-                  title={`Season ${col.seasonId} · Week ${col.sectionIndex + 1} · finished #${col.rank}`}
-                >
-                  <div className="whitespace-nowrap">{col.label}</div>
-                  <div className={`text-[11px] font-bold ${rankColor(col.rank)}`}>#{col.rank}</div>
-                </th>
-              ))}
+              {columns.map((col, i) => {
+                const colKey: WarSortKey = `col:${i}`;
+                const active = sort === colKey;
+                return (
+                  <th
+                    key={col.key}
+                    className={`border-card-border hover:text-ink cursor-pointer border-b px-1.5 py-2 text-center font-medium select-none ${active ? "text-gold" : ""}`}
+                    title={`Season ${col.seasonId} · Week ${col.sectionIndex + 1} · finished #${col.rank} · click to sort by this week's ${mode}`}
+                    onClick={() => toggleSort(colKey)}
+                  >
+                    <div className="whitespace-nowrap">
+                      {col.label}
+                      {active ? <span className="text-gold"> {desc ? "▾" : "▴"}</span> : null}
+                    </div>
+                    <div
+                      className={`text-[11px] font-bold ${active ? "text-gold" : rankColor(col.rank)}`}
+                    >
+                      #{col.rank}
+                    </div>
+                  </th>
+                );
+              })}
               {AGG_COLUMNS.map((col) => (
                 <SortableTh
                   key={col.key}
