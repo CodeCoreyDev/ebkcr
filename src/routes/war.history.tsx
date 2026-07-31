@@ -61,7 +61,7 @@ function SortableTh({
 }) {
   return (
     <th
-      className={`hover:text-ink cursor-pointer px-3 py-2 font-medium whitespace-nowrap select-none ${align === "right" ? "text-right" : "text-left"}`}
+      className={`hover:text-gold border-line cursor-pointer border-b px-3 py-2.5 whitespace-nowrap select-none ${align === "right" ? "text-right" : "text-left"} ${active ? "text-gold" : ""}`}
       onClick={onClick}
     >
       {label}
@@ -102,13 +102,13 @@ function WarHistory() {
       <div className="flex flex-col gap-1">
         <Link
           to="/war"
-          className="text-ink-muted hover:text-ink flex w-fit items-center gap-1 text-xs font-medium"
+          className="text-onfield-muted flex w-fit items-center gap-1 text-xs font-semibold transition-colors hover:text-white"
         >
           <ArrowLeft className="size-3.5" />
           Back to Clan War
         </Link>
-        <h1 className="text-2xl font-black tracking-tight">War Participation</h1>
-        <p className="text-ink-muted text-sm">
+        <h1 className="cr-title mt-1 text-3xl">War Participation</h1>
+        <p className="text-onfield-muted text-sm">
           {sorted.length} {currentOnly ? "current members" : "players"} across the last{" "}
           {columns.length} wars · click a column to sort
         </p>
@@ -116,7 +116,9 @@ function WarHistory() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="bg-field-soft/60 border-card-border inline-flex rounded-lg border p-0.5 text-sm font-medium">
+          {/* Segmented control, built to match the nav tabs: the selected side
+              lifts into a gold plate, the other stays flat. */}
+          <div className="inline-flex rounded-xl border border-black/40 bg-black/25 p-1 text-sm shadow-[inset_0_2px_4px_rgb(0_0_0/0.35)]">
             {(
               [
                 ["current", "Current"],
@@ -129,8 +131,10 @@ function WarHistory() {
                   key={value}
                   type="button"
                   onClick={() => setCurrentOnly(value === "current")}
-                  className={`rounded-md px-3 py-1 transition-colors ${
-                    active ? "bg-gold/15 text-gold" : "text-ink-muted hover:text-ink"
+                  className={`font-display rounded-lg px-3 py-1 font-bold transition-colors ${
+                    active
+                      ? "bg-gradient-to-b from-[#ffd54a] to-[#f0a80c] text-white shadow-[inset_0_2px_0_#ffeaa0,0_2px_0_#7d3f00] [text-shadow:0_1px_0_#8a4200]"
+                      : "text-onfield-muted hover:text-white"
                   }`}
                 >
                   {label}
@@ -143,10 +147,13 @@ function WarHistory() {
       </div>
 
       <Card className="overflow-x-auto">
-        <table className="border-separate border-spacing-0 text-sm">
-          <thead className="text-ink-muted text-xs tracking-wide uppercase">
+        <table className="w-full border-separate border-spacing-0 text-sm">
+          <thead className="text-gold-soft bg-thead text-[11px] font-bold tracking-wider uppercase">
             <tr>
-              <th className="bg-card border-card-border sticky left-0 z-10 border-b px-3 py-2 text-left">
+              {/* Sticky cells can't use the translucent `--color-thead` — the
+                  columns they're meant to occlude would scroll through underneath —
+                  so they take its opaque twin instead. */}
+              <th className="border-line bg-sticky-head sticky left-0 z-10 border-b px-3 py-2.5 text-left">
                 <SortableInline
                   label="Player"
                   active={sort === "name"}
@@ -160,7 +167,7 @@ function WarHistory() {
                 return (
                   <th
                     key={col.key}
-                    className={`border-card-border hover:text-ink cursor-pointer border-b px-1.5 py-2 text-center font-medium select-none ${active ? "text-gold" : ""}`}
+                    className={`hover:text-gold border-line cursor-pointer border-b px-1.5 py-2.5 text-center select-none ${active ? "text-gold" : ""}`}
                     title={`Season ${col.seasonId} · Week ${col.sectionIndex + 1} · finished #${col.rank} · click to sort by this week's medals`}
                     onClick={() => toggleSort(colKey)}
                   >
@@ -239,7 +246,7 @@ function PlayerRowView({
 
   return (
     <tr className="group">
-      <td className="bg-card group-hover:bg-field-soft border-card-border/50 sticky left-0 z-10 border-b px-3 py-1.5">
+      <td className="bg-sticky group-hover:bg-field-soft border-line sticky left-0 z-10 border-b px-3 py-1.5">
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2 whitespace-nowrap">
             <span className="font-medium">{player.name}</span>
@@ -272,7 +279,7 @@ function PlayerRowView({
         return (
           <td
             key={col.key}
-            className="border-card-border/50 group-hover:bg-field-soft border-b p-0 text-center"
+            className="group-hover:bg-field-soft border-line border-b p-0 text-center"
           >
             {cell ? (
               <div
@@ -298,7 +305,7 @@ function PlayerRowView({
 function Agg({ value, strong }: { value: string | number; strong?: boolean }) {
   return (
     <td
-      className={`border-card-border/50 group-hover:bg-field-soft border-b px-3 py-1.5 text-right tabular-nums ${strong ? "text-gold font-semibold" : ""}`}
+      className={`group-hover:bg-field-soft border-line border-b px-3 py-1.5 text-right tabular-nums ${strong ? "text-gold font-semibold" : ""}`}
     >
       {value}
     </td>
@@ -309,7 +316,7 @@ function Legend({ maxFame }: { maxFame: number }) {
   // Red chip for the demote zone, then a blue ramp mirroring the cell heatmap.
   const ramp = [0.15, 0.4, 0.7, 1];
   return (
-    <div className="text-ink-muted flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+    <div className="text-onfield-muted flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
       <span className="rounded px-1.5 py-0.5" style={medalCellStyle(0, maxFame)}>
         Below {formatNumber(MEDAL_DEMOTE)}
       </span>

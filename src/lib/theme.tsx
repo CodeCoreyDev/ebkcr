@@ -1,7 +1,7 @@
 /**
  * Light/dark theme layer.
  *
- * The whole UI re-skins by toggling the `dark` class on <html> — see styles.css,
+ * The panels re-skin by toggling the `dark` class on <html> — see styles.css,
  * where every semantic color token is redefined under `html.dark`. LIGHT is the
  * default; a saved choice is applied pre-paint by the inline script in index.html
  * so there's no flash. This provider just mirrors that class into React state and

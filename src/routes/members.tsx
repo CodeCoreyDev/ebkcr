@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { RoleBadge } from "@/components/role-badge";
 import { Card } from "@/components/ui/card";
+import { TD, TH, THead, TR } from "@/components/ui/table";
 import { formatNumber, formatRelativeTime } from "@/lib/clash";
 import { useClashData } from "@/lib/clash-data";
 import { TABLE_COLUMNS, sortMembers } from "@/routes/-members-table";
@@ -45,56 +46,64 @@ function Members() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-2xl font-black tracking-tight">Roster</h1>
-        <p className="text-ink-muted text-sm">
+      <div className="flex flex-col items-start gap-1">
+        <h1 className="cr-title text-3xl">Roster</h1>
+        <p className="text-onfield-muted text-sm">
           {clan.memberList.length} members · click a column to sort
         </p>
       </div>
 
+      {/* `overflow-hidden` so the header strip and the last row are clipped by
+          the panel's 16px corners instead of squaring them off. */}
       <Card className="overflow-hidden">
-        <table className="w-full border-collapse text-sm">
-          <thead className="text-ink-muted text-left text-xs tracking-wide uppercase">
-            <tr className="border-card-border border-b">
-              {TABLE_COLUMNS.map((col) => (
-                <th
-                  key={col.key}
-                  className={`hover:text-ink cursor-pointer px-3 py-3 font-medium select-none ${col.align === "right" ? "text-right" : ""}`}
-                  onClick={() => toggleSort(col.key)}
-                >
-                  {col.label}
-                  {sort === col.key ? <span className="text-gold"> {desc ? "▾" : "▴"}</span> : null}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((m) => (
-              <tr key={m.tag} className="border-card-border/50 hover:bg-field-soft/50 border-b">
-                <td className="px-3 py-2.5">
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-ink-muted w-5 text-right font-mono">{m.clanRank}</span>
-                    <RankDelta rank={m.clanRank} prev={m.previousClanRank} />
-                  </span>
-                </td>
-                <td className="px-3 py-2.5 font-medium">{m.name}</td>
-                <td className="px-3 py-2.5">
-                  <RoleBadge role={m.role} />
-                </td>
-                <td className="text-gold px-3 py-2.5 text-right font-semibold">
-                  {formatNumber(m.trophies)}
-                </td>
-                <td className="px-3 py-2.5 text-right">{formatNumber(m.donations)}</td>
-                <td className="text-ink-muted px-3 py-2.5 text-right">
-                  {formatNumber(m.donationsReceived)}
-                </td>
-                <td className="text-ink-muted px-3 py-2.5 text-right">
-                  {formatRelativeTime(m.lastSeen)}
-                </td>
+        <div className="w-full overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <THead>
+              <tr>
+                {TABLE_COLUMNS.map((col) => (
+                  <TH
+                    key={col.key}
+                    className={`hover:text-gold cursor-pointer whitespace-nowrap select-none ${col.align === "right" ? "text-right" : ""}`}
+                    onClick={() => toggleSort(col.key)}
+                  >
+                    {col.label}
+                    {sort === col.key ? (
+                      <span className="text-gold"> {desc ? "▾" : "▴"}</span>
+                    ) : null}
+                  </TH>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </THead>
+            <tbody>
+              {members.map((m) => (
+                <TR key={m.tag}>
+                  <TD>
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-ink-muted w-5 text-right tabular-nums">
+                        {m.clanRank}
+                      </span>
+                      <RankDelta rank={m.clanRank} prev={m.previousClanRank} />
+                    </span>
+                  </TD>
+                  <TD className="font-semibold whitespace-nowrap">{m.name}</TD>
+                  <TD>
+                    <RoleBadge role={m.role} />
+                  </TD>
+                  <TD className="text-gold text-right font-bold tabular-nums">
+                    {formatNumber(m.trophies)}
+                  </TD>
+                  <TD className="text-right tabular-nums">{formatNumber(m.donations)}</TD>
+                  <TD className="text-ink-muted text-right tabular-nums">
+                    {formatNumber(m.donationsReceived)}
+                  </TD>
+                  <TD className="text-ink-muted text-right whitespace-nowrap">
+                    {formatRelativeTime(m.lastSeen)}
+                  </TD>
+                </TR>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );

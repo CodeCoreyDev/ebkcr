@@ -33,19 +33,28 @@ function CurrentRace({ currentRiverRace }: { currentRiverRace: CurrentRiverRace 
       <CardHeader>
         <CardTitle>Current River Race · {race.periodType}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-1">
+      <CardContent className="flex flex-col gap-2">
         {standings.map((c, i) => {
           const isUs = c.tag === race.clan.tag;
           return (
             <div
               key={c.tag}
-              className={`flex items-center justify-between rounded-lg px-3 py-2 ${isUs ? "bg-gold/10 ring-gold/30 ring-1" : "hover:bg-field-soft/60"}`}
+              className={`cr-item flex items-center justify-between gap-3 ${isUs ? "cr-item-gold" : ""}`}
             >
               <span className="flex items-center gap-3">
-                <span className="text-ink-muted w-5 text-right font-mono">{i + 1}</span>
-                <span className={isUs ? "text-gold font-bold" : "font-medium"}>{c.name}</span>
+                <span
+                  className={`font-display w-5 text-right text-sm font-bold ${isUs ? "text-gold" : "text-ink-muted"}`}
+                >
+                  {i + 1}
+                </span>
+                {/* No truncation: clan names are length-capped in game, so they
+                    always fit. `leading-6` keeps the outline's drop off the row
+                    edge — `.cr-title`'s own 1.1 is tuned for headings. */}
+                <span className="cr-title leading-6">{c.name}</span>
               </span>
-              <span className="font-semibold">{formatNumber(c.fame)} fame</span>
+              <span className={`shrink-0 ${isUs ? "cr-chip cr-chip-gold" : "cr-chip"}`}>
+                {formatNumber(c.fame)}
+              </span>
             </div>
           );
         })}
@@ -94,7 +103,7 @@ function WarLog({
           return (
             <div
               key={`${entry.seasonId}-${entry.sectionIndex}`}
-              className="border-card-border/60 flex items-center justify-between rounded-lg border px-3 py-2.5"
+              className="cr-item flex items-center justify-between gap-3"
             >
               <span className="text-ink-muted text-sm">
                 Season {entry.seasonId} · Week {entry.sectionIndex + 1}
@@ -102,7 +111,7 @@ function WarLog({
                   ? ` · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
                   : ""}
               </span>
-              <span className={`text-lg font-black ${rankColor}`}>#{rank}</span>
+              <span className={`cr-stat shrink-0 text-xl ${rankColor}`}>#{rank}</span>
             </div>
           );
         })}
@@ -115,9 +124,9 @@ function War() {
   const { data } = useClashData();
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-2">
-        <Swords className="text-gold size-6" />
-        <h1 className="text-2xl font-black tracking-tight">Clan War</h1>
+      <div className="flex items-center gap-2.5">
+        <Swords className="size-7 text-[#ffc21c] drop-shadow-[0_2px_0_rgba(0,0,0,0.5)]" />
+        <h1 className="cr-title text-3xl">Clan War</h1>
       </div>
       <CurrentRace currentRiverRace={data.currentRiverRace} />
       <WarLog riverRaceLog={data.riverRaceLog} currentRiverRace={data.currentRiverRace} />

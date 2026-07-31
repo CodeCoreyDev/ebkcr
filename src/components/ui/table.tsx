@@ -13,23 +13,23 @@ export function Table({ className, ...props }: ComponentProps<"table">) {
 export function THead({ className, ...props }: ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("text-ink-muted text-left text-xs tracking-wide uppercase", className)}
+      className={cn(
+        "text-gold-soft bg-thead text-left text-[11px] font-bold tracking-wider uppercase",
+        className,
+      )}
       {...props}
     />
   );
 }
 
 export function TH({ className, ...props }: ComponentProps<"th">) {
-  return <th className={cn("px-3 py-2 font-medium", className)} {...props} />;
+  return <th className={cn("px-3 py-2.5 font-bold", className)} {...props} />;
 }
 
 export function TR({ className, ...props }: ComponentProps<"tr">) {
   return (
     <tr
-      className={cn(
-        "border-card-border/60 hover:bg-field-soft/60 border-b transition-colors",
-        className,
-      )}
+      className={cn("border-line hover:bg-wash border-b transition-colors", className)}
       {...props}
     />
   );

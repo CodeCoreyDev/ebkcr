@@ -2,29 +2,18 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
+/** The navy slab everything sits on; see `.cr-panel` in styles.css. */
 export function Card({ className, ...props }: ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "border-card-border bg-card/80 rounded-2xl border shadow-lg shadow-black/20 backdrop-blur-sm",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <div className={cn("cr-panel", className)} {...props} />;
 }
 
 export function CardHeader({ className, ...props }: ComponentProps<"div">) {
   return <div className={cn("flex flex-col gap-1 p-5 pb-3", className)} {...props} />;
 }
 
+/** Stamped gold caption over a card's contents. */
 export function CardTitle({ className, ...props }: ComponentProps<"h3">) {
-  return (
-    <h3
-      className={cn("text-ink-muted text-sm font-semibold tracking-wide uppercase", className)}
-      {...props}
-    />
-  );
+  return <h3 className={cn("cr-label", className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: ComponentProps<"div">) {

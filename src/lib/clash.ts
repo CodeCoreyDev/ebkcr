@@ -109,7 +109,7 @@ export const seedData: ClashData = {
 
 export const ROLE_LABELS: Record<ClanRole, string> = {
   leader: "Leader",
-  coLeader: "Co-Leader",
+  coLeader: "Co-leader",
   elder: "Elder",
   member: "Member",
 };
@@ -163,6 +163,75 @@ export function formatFetchedAt(fetchedAt: string | null): string {
     month: "long",
     day: "numeric",
   });
+}
+
+/** One player's showing in a single war, ranked against their clanmates. */
+export interface WarPerformer {
+  tag: string;
+  name: string;
+  /** War medals — the API calls this "fame". */
+  medals: number;
+  decksUsed: number;
+  /** 1-based placement within the clan for that war. */
+  place: number;
+  role: ClanRole | null;
+}
+
+/** The clan's most recent *completed* war, with its roster ranked by medals. */
+export interface RecentWar {
+  seasonId: number;
+  sectionIndex: number;
+  date: Date | null;
+  /** Where the clan finished the race (1 = won it). */
+  clanRank: number;
+  /** Everyone who earned medals, best first. */
+  performers: WarPerformer[];
+}
+
+/**
+ * Find the latest war in the log that our clan actually scored in, and rank its
+ * participants by medals earned. Used for the landing-page leaderboard, so it
+ * deliberately reads from the log (completed wars) rather than the current river
+ * race, which sits at zero medals during training days.
+ */
+export function computeRecentWar(clan: Clan, riverRaceLog: RiverRaceLogEntry[]): RecentWar | null {
+  // The API returns newest-first, but don't bank on it — sort to be sure.
+  const entries = [...riverRaceLog].sort((a, b) =>
+    a.seasonId !== b.seasonId ? b.seasonId - a.seasonId : b.sectionIndex - a.sectionIndex,
+  );
+  const memberByTag = new Map(clan.memberList.map((m) => [m.tag, m]));
+
+  for (const entry of entries) {
+    const ours = entry.standings.find((s) => s.clan.tag === clan.tag);
+    if (!ours) continue;
+    const performers = ours.clan.participants
+      // Players who sat the war out aren't performers.
+      .filter((p) => p.fame > 0)
+      // Most medals wins; on a tie, whoever spent fewer decks getting there.
+      .sort((a, b) => b.fame - a.fame || a.decksUsed - b.decksUsed || a.name.localeCompare(b.name))
+      .map((p, i) => {
+        const member = memberByTag.get(p.tag);
+        return {
+          tag: p.tag,
+          // Prefer the current roster name — it's fresher than the war snapshot.
+          name: member?.name ?? p.name,
+          medals: p.fame,
+          decksUsed: p.decksUsed,
+          place: i + 1,
+          role: member?.role ?? null,
+        };
+      });
+    // A logged war with no medals at all (rare, but possible) isn't worth showing.
+    if (performers.length === 0) continue;
+    return {
+      seasonId: entry.seasonId,
+      sectionIndex: entry.sectionIndex,
+      date: parseClashDate(entry.createdDate),
+      clanRank: ours.rank,
+      performers,
+    };
+  }
+  return null;
 }
 
 export interface ClanStats {
