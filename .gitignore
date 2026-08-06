@@ -9,3 +9,7 @@ src/routeTree.gen.ts
 .env
 .env.local
 *.local
+
+# Full-resolution source art. The optimized copies that actually ship live in
+# public/; these are the originals and are far too big for git or the build.
+art/

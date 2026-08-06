@@ -1,70 +1,1118 @@
 @import "tailwindcss";
 
 /*
- * Clash-Royale-flavored theming. LIGHT is the default; adding the `dark` class
- * to <html> flips every semantic token below. Components only ever reference the
- * semantic utilities (bg-field, text-ink, …), so the whole UI re-skins purely by
- * swapping these custom properties — no `dark:` variants needed anywhere.
+ * Clash Royale skin, modelled on store.supercell.com/clashroyale.
+ *
+ * The look is one committed theme, not a light/dark pair: an arena-blue field
+ * with a quilted diamond lattice, dark navy panels floating on top, gold for
+ * anything that counts as a prize, and outlined Clash-font titles. Supercell's
+ * store does the same — there is no theme switch there either.
  */
-@theme {
-  /* Light theme (default): bright arena — airy blue-white field, ink navy text. */
-  --color-field: #eef3fa;
-  --color-field-soft: #e2e9f4;
-  --color-card: #ffffff;
-  --color-card-border: #d3ddec;
-  --color-ink: #16203a;
-  --color-ink-muted: #5a6b86;
-  --color-gold: #b07d12;
-  --color-gold-soft: #916312;
-  --color-arena: #1a7fd4;
-  --color-victory: #15a34a;
-  --color-defeat: #dc2626;
 
-  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+/*
+ * Clash display face, straight from the official fan kit. Only the weights the
+ * UI actually asks for are shipped; `swap` so text paints in the fallback while
+ * the ~50 KB files land. These are .otf as downloaded — small enough that
+ * converting to woff2 isn't worth a build step.
+ */
+@font-face {
+  font-family: "Clash";
+  src: url("/fonts/Clash-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Clash";
+  src: url("/fonts/Clash-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Clash";
+  src: url("/fonts/Clash-Heavy.otf") format("opentype");
+  font-weight: 900;
+  font-display: swap;
 }
 
 /*
- * Dark theme overrides. Selector is `html.dark` (specificity beats the :root that
- * @theme emits) so these win the cascade; custom properties then inherit down.
+ * LIGHT is the default; adding `dark` to <html> flips every token below. What
+ * does NOT flip is the arena itself — the blue lattice and the navy header and
+ * footer stay put in both. Only the panels floating on top change, which is why
+ * a theme switch reads as turning the lights on inside the cards rather than
+ * repainting the whole site.
+ *
+ * Components reference only these semantic names, so nothing needs `dark:`.
  */
+@theme {
+  /* Arena field. This is the *average* color of the lattice tile, so the flat
+     body color underneath disappears behind it — no edge where the image ends.
+     Same in both themes: the artwork doesn't change. */
+  --color-field: #135891;
+
+  /* Chrome: header, footer, and any badge that should punch a hole in the page.
+     Fixed in both themes. */
+  --color-navy: #131e36;
+
+  /*
+   * Text drawn straight onto the blue artwork — page subtitles, the 404 copy,
+   * anything outside a panel. Fixed light in both themes for the same reason the
+   * chrome is: the field behind it never changes, so `--color-ink` flipping to
+   * near-black would wipe this text out in light mode.
+   */
+  --color-onfield: #ffffff;
+  --color-onfield-muted: rgb(255 255 255 / 0.78);
+
+  /* Panels. `card` is the lit corner of the gradient, `card-deep` the far one. */
+  --color-card: #ffffff;
+  --color-card-deep: #eef3fa;
+
+  --color-ink: #16203a;
+  --color-ink-muted: #5a6b86;
+
+  /* Gold has to carry text on a white panel here, so it's the deep antique tone
+     rather than the bright plate gold — that one only passes on navy. */
+  --color-gold: #a97410;
+  --color-gold-soft: #855a0c;
+  --color-arena: #1a6fbe;
+  --color-victory: #15803d;
+  --color-defeat: #c2261c;
+
+  /*
+   * Surface-relative tints. Every hairline, hover wash and table strip goes
+   * through these instead of hardcoding white-alpha, which is what let the dark
+   * skin invert without touching a single component.
+   */
+  --color-line: rgb(22 32 58 / 0.12);
+  --color-wash: rgb(22 32 58 / 0.05);
+  --color-thead: rgb(22 32 58 / 0.06);
+  /* Opaque twins of the two above, for sticky table cells: a translucent sticky
+     cell lets the columns it's supposed to occlude scroll through underneath. */
+  --color-sticky: #ffffff;
+  --color-sticky-head: #f1f4f9;
+  --color-field-soft: #e4eaf4;
+
+  /* Clash for anything display-sized; the system stack carries body copy, since
+     Clash is a titling face and turns to mush below ~14px. */
+  --font-display: "Clash", ui-sans-serif, system-ui, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Dark skin. `html.dark` beats the `:root` that @theme emits on specificity, so
+   these win the cascade and then inherit down. */
 html.dark {
-  --color-field: #0b1220;
-  --color-field-soft: #0f1729;
-  --color-card: #131c30;
-  --color-card-border: #233149;
-  --color-ink: #e6ecf5;
-  --color-ink-muted: #93a1b8;
-  --color-gold: #f2c14e;
-  --color-gold-soft: #f7d98a;
-  --color-arena: #3aa0ff;
-  --color-victory: #4ade80;
-  --color-defeat: #f87171;
+  --color-card: #2a3447;
+  --color-card-deep: #212834;
+
+  --color-ink: #ffffff;
+  --color-ink-muted: #a9b8d1;
+
+  --color-gold: #ffc21c;
+  --color-gold-soft: #ffdd6b;
+  --color-arena: #4fa8ff;
+  --color-victory: #4ad07f;
+  --color-defeat: #ff6b5e;
+
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-wash: rgb(255 255 255 / 0.06);
+  --color-thead: rgb(0 0 0 / 0.2);
+  --color-sticky: #2a3447;
+  --color-sticky-head: #222a39;
+  --color-field-soft: #333f58;
 }
 
 @layer base {
   :root {
     color-scheme: light;
-    /* Soft radial glow behind the page, tuned per theme. */
-    --bg-glow: #cddffb;
+
+    /* The near-black every outlined title is drawn against. Fixed in both
+       themes — outlined titles only ever sit on the artwork or the navy chrome,
+       neither of which flips. */
+    --cr-outline: #0b1020;
+
+    /*
+     * Width one copy of the lattice artwork is drawn at. The source is 1920px
+     * wide and holds 8 diamonds, so the on-screen diamond size is this ÷ 8 —
+     * 960px gives 120px diamonds, which is about how the store scales its own.
+     * Turn it down for a denser weave, up for bigger shapes; the height follows
+     * the aspect ratio automatically, which is what keeps the seams invisible.
+     */
+    --lattice-tile: 960px;
+
+    /*
+     * Optional photographic backdrop for the landing page, layered over the
+     * lattice. Point this at a file in `public/` (paths are site-root-relative)
+     * to bring it back — `public/bg-crop1.webp` is the tiling one — and set
+     * `--home-bg-opacity` to taste. Off by default: the lattice is already a
+     * pattern, and two patterns stacked just read as noise.
+     */
+    --home-bg-image: none;
+    --home-bg-tile: 1000px;
+    --home-bg-opacity: 0.18;
   }
 
   html.dark {
     color-scheme: dark;
-    --bg-glow: #1a2a47;
   }
 
   body {
     margin: 0;
-    background:
-      radial-gradient(1200px 600px at 50% -10%, var(--bg-glow) 0%, transparent 60%),
-      var(--color-field);
+    background: var(--color-field);
     color: var(--color-ink);
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
     background: var(--color-gold);
-    color: var(--color-field);
+    color: var(--cr-outline);
+  }
+}
+
+@layer components {
+  /*
+   * Site-wide arena backdrop — the quilted diamond artwork, tiled. Fixed and at
+   * a negative z-index so it parks above the flat body color but under every bit
+   * of content, and stays put while the page scrolls.
+   *
+   * The source tiles seamlessly on both axes, so `repeat` is safe in both
+   * directions. Scaling by width only (`auto` height) preserves the aspect ratio;
+   * pinning the height too would stretch the diamonds and split the seams open.
+   */
+  .cr-lattice {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image: url("/blue-bg.webp");
+    background-repeat: repeat;
+    background-position: top center;
+    background-size: var(--lattice-tile) auto;
+  }
+
+  /* Gentle corner falloff so the field reads as a lit arena rather than flat
+     wallpaper. Kept light on purpose: the artwork already carries its own bevel
+     shading, and stacking a strong vignette on top just turns the edges muddy. */
+  .cr-lattice::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(125% 95% at 50% 0%, transparent 45%, rgb(6 20 44 / 0.28) 100%);
+  }
+
+  /* Photographic landing-page backdrop; see `--home-bg-image` above. Sits
+     between the lattice and the content. */
+  .home-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--home-bg-image);
+    background-repeat: repeat;
+    /* Anchor top-center and scale by width only — `auto` keeps the aspect ratio,
+       which is what keeps the tile seams invisible. */
+    background-position: top center;
+    background-size: var(--home-bg-tile) auto;
+    opacity: var(--home-bg-opacity);
+  }
+
+  /*
+   * The signature Clash title: white Clash type, thick dark outline, stacked
+   * straight down for a stamped-out-of-metal drop.
+   *
+   * Everything is in `em` so one class scales from a page h1 to a card label.
+   * `paint-order: stroke fill` is load-bearing — without it the stroke is drawn
+   * *over* the glyph and eats half the letterform at this weight.
+   */
+  .cr-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: #fff;
+    -webkit-text-stroke: 0.055em var(--cr-outline);
+    paint-order: stroke fill;
+    text-shadow:
+      0 0.05em 0 var(--cr-outline),
+      -0.015em 0.07em 0 var(--cr-outline),
+      0.015em 0.07em 0 var(--cr-outline);
+  }
+
+  /*
+   * Display numbers that live ON a panel — stat values, medal counts, war ranks.
+   *
+   * Separate from `.cr-title` because the outlined treatment only works over the
+   * artwork and the navy chrome. On a white panel, white-filled outlined type has
+   * nothing to sit against and collapses into hollow letterforms, so here the
+   * glyph is filled with `--color-ink` and carries no stroke at all. The dark
+   * skin puts the stamped outline back, where it has something to bite into.
+   */
+  .cr-stat {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--color-ink);
+  }
+
+  html.dark .cr-stat {
+    color: #fff;
+    -webkit-text-stroke: 0.05em var(--cr-outline);
+    paint-order: stroke fill;
+    text-shadow: 0 0.045em 0 var(--cr-outline);
+  }
+
+  /* Gold variant — for the one number on a page that should out-shout the rest. */
+  .cr-stat-gold,
+  html.dark .cr-stat-gold {
+    color: var(--color-gold);
+  }
+
+  /* Small stamped label: the uppercase tracked-out captions over card sections.
+     No outline — at this size a stroke would close up the counters. */
+  .cr-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-gold-soft);
+  }
+
+  /* The drop only reads on navy; over a white panel it's just grime. */
+  html.dark .cr-label {
+    text-shadow: 0 2px 0 rgb(0 0 0 / 0.45);
+  }
+
+  /*
+   * Panel — the slab everything sits on, shaped like the store's bundle cards: a
+   * diagonal gradient, a 1px lit rim, and a hard bottom edge under a soft cast
+   * shadow to give it thickness.
+   *
+   * The cast shadow stays dark in both themes. A light panel still sits on the
+   * blue arena, not on white, so it has to drop a real shadow to look like it's
+   * floating — this is the one place the light skin doesn't lighten.
+   */
+  .cr-panel {
+    border-radius: 16px;
+    background-image: linear-gradient(134deg, var(--color-card) 20%, var(--color-card-deep) 100%);
+    border: 1px solid rgb(255 255 255 / 0.55);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 4px 0 rgb(6 20 44 / 0.16),
+      0 12px 26px rgb(6 20 44 / 0.3);
+  }
+
+  html.dark .cr-panel {
+    border-color: rgb(255 255 255 / 0.09);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.07),
+      0 4px 0 rgb(0 0 0 / 0.22),
+      0 12px 26px rgb(0 0 0 / 0.38);
+  }
+
+  /*
+   * Gold chip — the store's little rounded plates under every reward icon.
+   * Fixed gold values rather than tokens: a chip is an object sitting on the
+   * page, so it shouldn't drift with the surface behind it.
+   */
+  .cr-chip {
+    /* Default navy palette */
+    --chip-top: #9dafc8;
+    --chip-bottom: #869bb9;
+    --chip-border: #869bb9;
+
+    --chip-outer-dark: #73849f;
+    --chip-outer-light: rgb(220 235 255 / 0.75);
+
+    --chip-text: #fff;
+    --chip-text-shadow: #000000;
+
+    position: relative;
+    isolation: isolate;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    padding: 0.3rem 0.4rem;
+
+    border: 2px solid var(--chip-border);
+    border-radius: 0.4rem;
+
+    background: linear-gradient(to bottom, var(--chip-top) 0 50%, var(--chip-bottom) 50% 100%);
+
+    color: var(--chip-text);
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-shadow: 0 1px 0 var(--chip-text-shadow);
+    -webkit-text-stroke: 0.03rem #000000;
+    white-space: nowrap;
+  }
+
+  /* Outer recessed groove */
+  .cr-chip::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+
+    /*
+    * Makes this layer larger than the chip,
+    * so its inset shadows appear outside the border.
+    */
+    inset: -2px;
+    border-radius: inherit;
+
+    box-shadow:
+      inset 0 1px 1px var(--chip-outer-dark),
+      inset 0 -2px 1px var(--chip-outer-light);
+
+    pointer-events: none;
+  }
+
+  .cr-chip-gold {
+    --chip-top: #d99923;
+    --chip-bottom: #c77e0f;
+    --chip-border: #c77e0f;
+
+    --chip-outer-dark: #aa7110;
+    --chip-outer-light: #fecd5f;
+  }
+
+  /*
+   * List item — the rows that stack inside a card's content: war standings, the
+   * medal leaderboard, the war log. Built from the same three pieces as the rest
+   * of the skin: a face color, a lit plate over the top half, and a darker lip
+   * along the bottom that gives the row thickness like the active nav tab.
+   *
+   * Two differences from `.cr-chip`. The highlight is a rounded plate inset from
+   * the edges rather than a hard 50% gradient split, so the face color rings it
+   * on all four sides instead of only meeting it at the border. And the whole
+   * thing carries a solid black outline.
+   *
+   * The lip is an INSET shadow rather than an outer drop like `.cr-btn`'s side
+   * wall, so the black ring only has to trace one rounded rectangle instead of a
+   * two-step silhouette. The row doesn't press, so it doesn't need a real wall.
+   *
+   * Fixed hex, like the chip, for the same reason: a row is an object sitting on
+   * the panel, not a tint of it. That puts it out of reach of the theme — the
+   * ink tokens flip to white in dark mode and would disappear against these pale
+   * faces — so the item rebinds the tokens its children use locally, and every
+   * `text-ink-muted` / `text-gold` inside follows without touching a class.
+   */
+  .cr-item {
+    --item-face: #c9d7ed;
+    --item-highlight: #dee7f5;
+    --item-lip: #6b82a3;
+
+    /* Lip thickness, and the gap that holds the highlight plate clear of the
+       outer edge so a ring of face color shows around it. */
+    --item-lip-h: 3px;
+    --item-inset: 2px;
+    --item-radius: 8px;
+
+    --color-ink: #16203a;
+    --color-ink-muted: #4f6183;
+    --color-gold: #8a5c07;
+    --color-gold-soft: #7a520a;
+    --color-arena: #14538f;
+    --color-victory: #15803d;
+    --color-line: rgb(22 32 58 / 0.25);
+    --color-wash: rgb(22 32 58 / 0.06);
+
+    position: relative;
+    /* Traps the highlight's negative z-index inside the row, so it lands above
+       the face but below the text rather than behind the panel. */
+    isolation: isolate;
+
+    padding: 0.5rem 0.75rem calc(0.5rem + var(--item-lip-h));
+    border-radius: var(--item-radius);
+    background: var(--item-face);
+    box-shadow:
+      inset 0 calc(var(--item-lip-h) * -1) 0 var(--item-lip),
+      0 0 0 2px #000;
+
+    color: var(--color-ink);
+  }
+
+  /* The rounded highlight plate over the top half. */
+  .cr-item::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: var(--item-inset);
+    right: var(--item-inset);
+    left: var(--item-inset);
+    height: calc(50% - var(--item-inset));
+    border-radius: calc(var(--item-radius) - var(--item-inset));
+    background: var(--item-highlight);
+    pointer-events: none;
+  }
+
+  .cr-item-gold {
+    --item-face: #f4b831;
+    --item-highlight: #f8d446;
+    --item-lip: #c27d05;
+
+    --color-ink: #3a2400;
+    --color-ink-muted: #7a5406;
+    --color-gold: #5c3a00;
+    --color-gold-soft: #5c3a00;
+    --color-arena: #123f6e;
+    --color-victory: #14532d;
+    --color-line: rgb(58 36 0 / 0.3);
+    --color-wash: rgb(58 36 0 / 0.08);
+  }
+
+  /*
+   * Rank badge — a miniature of the whole row, with a slot cut into it for the
+   * placement number. Three concentric bands, outside in:
+   *
+   *   1. the outer line, at the lip's thickness but a fixed grey rather than the
+   *      row's own lip color — off the podium every badge reads as the same
+   *      piece of hardware, and the variants below re-tint it where it matters;
+   *   2. a band of the row's own material: the same highlight → face tones, but
+   *      run as a smooth ramp instead of the row's hard 50% split, and carrying
+   *      its own lip along the bottom so the band reads as raised;
+   *   3. the slot, built like `.cr-chip`'s face — the same hard 50/50 plate, the
+   *      same groove shadows — so it and the medal chip at the other end of the
+   *      row read as two cuts of one material.
+   *
+   * Bands 2 and 3 are drawn entirely from the three `--item-*` tokens, which is
+   * why the podium variants below can re-skin them by rebinding those and
+   * nothing else; only band 1's grey has to be named.
+   *
+   * White stamped text rather than the ink tokens: those are tuned for the row's
+   * pale face and go muddy against the slot. This is the chip's exact treatment,
+   * which is the other thing the badge is being matched to.
+   */
+  .cr-place {
+    /* Width of band 2, and the lip it carries along its own bottom edge. */
+    --place-band: 3px;
+    --place-band-lip: 3px;
+    --place-radius: 0.75rem;
+
+    position: relative;
+    /* Traps the slot's negative z-index inside the badge, so it lands above
+       band 2 but below the number — same trick as `.cr-item`'s highlight. */
+    isolation: isolate;
+
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.6rem;
+
+    /* Band 1. */
+    border: var(--item-lip-h) solid #929fb1;
+    border-radius: var(--place-radius);
+
+    /* Band 2. */
+    background-image: linear-gradient(to bottom, var(--item-highlight) 0%, var(--item-face) 100%);
+    box-shadow: inset 0 calc(var(--place-band-lip) * -1) 0 var(--item-lip);
+
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 #000;
+    -webkit-text-stroke: 0.03rem #000;
+  }
+
+  /* Band 3 — the slot. Offsets are from the padding box, so they measure in from
+     the inside of band 1; the extra on the bottom clears band 2's lip. */
+  .cr-place::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: var(--place-band);
+    right: var(--place-band);
+    bottom: calc(var(--place-band) + var(--place-band-lip));
+    left: var(--place-band);
+    border-radius: calc(var(--place-radius) - var(--item-lip-h) - var(--place-band));
+
+    /* `.cr-chip`'s face and groove, part for part: the hard 50/50 plate, a lip
+       shadow along the top edge, a highlight along the bottom. The recess comes
+       from band 2 sitting proud around it rather than from inverting the plate. */
+    background-image: linear-gradient(
+      to bottom,
+      var(--item-highlight) 0 50%,
+      var(--item-face) 50% 100%
+    );
+    box-shadow:
+      inset 0 1px 1px var(--item-lip),
+      inset 0 -2px 1px var(--item-highlight);
+    pointer-events: none;
+  }
+
+  /*
+   * Podium tints. Bands 2 and 3 come entirely from the three `--item-*` tokens,
+   * so rebinding those re-skins both; band 1's grey is the only thing a variant
+   * has to name outright.
+   *
+   * Gold rebinds nothing at all. First place always sits in the `.cr-item-gold`
+   * row, so the tokens are already gold by inheritance and the badge only has to
+   * opt its outer line back into them.
+   *
+   * Silver is deliberately pulled toward neutral grey rather than just lightened.
+   * The rows themselves are blue-grey, so a silver that keeps any blue in it
+   * reads as "same badge, slightly paler" instead of as a different metal.
+   */
+  .cr-place-gold {
+    border-color: color-mix(in srgb, var(--item-lip) 62%, #000);
+  }
+
+  .cr-place-silver {
+    --item-face: #dadee4;
+    --item-highlight: #f4f6f9;
+    --item-lip: #b6bfcb;
+  }
+
+  .cr-place-bronze {
+    --item-face: #d58b50;
+    --item-highlight: #e8a870;
+    --item-lip: #9c5a28;
+  }
+
+  /*
+   * Numbers inside a row take the light-panel treatment in both themes. The dark
+   * skin's stamped white-on-black version is aimed at a dark panel; on these pale
+   * faces it reads as a smudge.
+   */
+  .cr-item .cr-stat,
+  html.dark .cr-item .cr-stat {
+    color: var(--color-ink);
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+  }
+
+  /*
+   * Chunky 3D button. The hard `0 Npx 0` shadow is the button's *side wall*, so
+   * pressing has to shrink it by exactly as much as the button travels down —
+   * otherwise the whole control appears to slide rather than depress.
+   */
+  .cr-btn {
+    --btn-drop: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.125rem;
+    border: none;
+    border-radius: 12px;
+    background-image: linear-gradient(to bottom, #ffd54a 0%, #f0a80c 100%);
+    box-shadow:
+      inset 0 2px 0 #ffeaa0,
+      inset 0 -3px 0 #c06a00,
+      0 var(--btn-drop) 0 #7d3f00,
+      0 calc(var(--btn-drop) + 3px) 9px rgb(0 0 0 / 0.35);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-shadow: 0 1px 0 #8a4200;
+    cursor: pointer;
+    transition:
+      translate 60ms ease,
+      box-shadow 60ms ease,
+      filter 120ms ease;
+  }
+
+  .cr-btn:hover {
+    filter: brightness(1.07);
+  }
+
+  .cr-btn:active {
+    translate: 0 var(--btn-drop);
+    box-shadow:
+      inset 0 2px 0 #ffeaa0,
+      inset 0 -3px 0 #c06a00,
+      0 0 0 #7d3f00;
+  }
+
+  /* Blue variant — secondary actions and back-links. */
+  .cr-btn-blue {
+    background-image: linear-gradient(to bottom, #5cb3ff 0%, #1f74d8 100%);
+    box-shadow:
+      inset 0 2px 0 #a8d9ff,
+      inset 0 -3px 0 #14508f,
+      0 var(--btn-drop) 0 #0d3a69,
+      0 calc(var(--btn-drop) + 3px) 9px rgb(0 0 0 / 0.35);
+    text-shadow: 0 1px 0 #0d3a69;
+  }
+
+  .cr-btn-blue:active {
+    box-shadow:
+      inset 0 2px 0 #a8d9ff,
+      inset 0 -3px 0 #14508f,
+      0 0 0 #0d3a69;
+  }
+
+  /*
+   * Gold ribbon header — the official Clash three-slice banner.
+   *
+   * The art is a classic sliced sprite: two fixed end caps with the folded tails,
+   * and a 1px-wide middle column built to be stretched to any width. All three
+   * are 170px tall and top-aligned, so scaling is driven entirely by height and
+   * every width below is derived from it.
+   *
+   * Two numbers out of the source art do all the work:
+   *   - caps are 122 and 123 wide against a 170 tall canvas
+   *   - the gold band only occupies the TOP 97px; the remaining 73px is the drop
+   *     shadow plus the tails that hang below the caps
+   * That second one is why the label needs bottom padding — centering in the box
+   * would drop the text through the band and onto the shadow.
+   */
+  .cr-ribbon {
+    /* The only dial: total artwork height. Everything else follows. */
+    --ribbon-h: 104px;
+    --ribbon-cap-l: calc(var(--ribbon-h) * 122 / 170);
+    --ribbon-cap-r: calc(var(--ribbon-h) * 123 / 170);
+    --ribbon-band: calc(var(--ribbon-h) * 97 / 170);
+
+    /* Recoloring hooks — see the `.cr-ribbon-*` variants below. Gold is the
+       artwork's own color, so the default tint is a no-op. */
+    --ribbon-tint: none;
+    --ribbon-edge: #8a4200;
+
+    position: relative;
+    /* Forces a stacking context so the `::before` artwork at z-index -1 stays
+       trapped behind the label but in front of whatever the ribbon sits on. */
+    isolation: isolate;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: var(--ribbon-h);
+    /* Keep the label off the folded caps… */
+    padding-inline: calc(var(--ribbon-cap-l) + 0.25rem);
+    /* …and sitting on the band rather than on the shadow below it. */
+    padding-bottom: calc(var(--ribbon-h) - var(--ribbon-band));
+
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    /* Sides get the edge color, the bottom a darkened mix of it — so a variant
+       only has to declare one color and the depth follows. */
+    text-shadow:
+      1px 0 0 var(--ribbon-edge),
+      -1px 0 0 var(--ribbon-edge),
+      0 2px 0 color-mix(in srgb, var(--ribbon-edge) 72%, #000);
+
+    /* Never let the caps crowd the label into a sliver. */
+    min-width: calc(var(--ribbon-cap-l) + var(--ribbon-cap-r) + 7rem);
+  }
+
+  /*
+   * The artwork itself lives on a pseudo-element purely so `--ribbon-tint` can
+   * filter it. A `filter` on `.cr-ribbon` would recolor the label along with the
+   * banner, which is exactly what we don't want — the text keeps its own palette.
+   *
+   * Caps are listed first so they paint OVER the stretched middle. The middle is
+   * then tucked `--ribbon-lap` *under* each cap rather than butted against it:
+   * cap widths land on fractions (104 × 122/170 = 74.64px) and the browser
+   * antialiases both edges at that boundary, so butting them leaves a hairline of
+   * background showing through. The overlap stays well clear of the transparent
+   * margins the caps carry on their outer edges.
+   */
+  .cr-ribbon::before {
+    --ribbon-lap: 2px;
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url("/ribbon/left.webp"), url("/ribbon/right.webp"), url("/ribbon/mid.webp");
+    background-repeat: no-repeat;
+    background-position:
+      left top,
+      right top,
+      left calc(var(--ribbon-cap-l) - var(--ribbon-lap)) top;
+    background-size:
+      auto 100%,
+      auto 100%,
+      calc(100% - var(--ribbon-cap-l) - var(--ribbon-cap-r) + var(--ribbon-lap) * 2) 100%;
+    filter: var(--ribbon-tint);
+  }
+
+  /*
+   * Color variants — one gold sprite, recolored at paint time. No extra image
+   * files, and the bevel, gloss and drop shadow all survive because the filter
+   * shifts every pixel through the same transform.
+   *
+   * Every one is `hue-rotate` PLUS saturate and brightness, never a bare
+   * rotation. CSS `hue-rotate` is a fixed matrix approximation that does not
+   * preserve luminance: rotating this gold toward blue on its own lifts lightness
+   * from 48% to 71% and you get a washed-out pastel. Push brightness down far
+   * enough to compensate, though, and it dims the bright top edge as hard as the
+   * body — the bevel flattens into a matte slab. The pairs below were swept and
+   * picked by eye for that balance rather than solved numerically. They're just
+   * numbers; retune freely.
+   *
+   * `--ribbon-edge` is the label's outline and is NOT filter-derived. Running the
+   * brown through the same transform works at low saturation but clips to a
+   * bright color at high ones (red lands on #ee0028), which is useless behind
+   * cream text — so the saturated variants carry a hand-picked dark tone.
+   */
+  .cr-ribbon-blue {
+    --ribbon-tint: hue-rotate(180deg) saturate(2.6) brightness(0.78);
+    --ribbon-edge: #0a3f86;
+  }
+
+  .cr-ribbon-green {
+    --ribbon-tint: hue-rotate(83deg) saturate(0.9) brightness(0.8);
+    --ribbon-edge: #0c510b;
+  }
+
+  .cr-ribbon-red {
+    --ribbon-tint: hue-rotate(310deg) saturate(3.4) brightness(0.58);
+    --ribbon-edge: #7a0a12;
+  }
+
+  .cr-ribbon-purple {
+    --ribbon-tint: hue-rotate(232deg) saturate(2.4) brightness(0.64);
+    --ribbon-edge: #3f1076;
+  }
+
+  .cr-ribbon-teal {
+    --ribbon-tint: hue-rotate(133deg) saturate(0.9) brightness(0.8);
+    --ribbon-edge: #005243;
+  }
+
+  .cr-ribbon-silver {
+    --ribbon-tint: saturate(0) brightness(1.05);
+    --ribbon-edge: #4a4a52;
+  }
+
+  /*
+   * Straddles the panel below it. Pulling up by exactly (height − band) lands the
+   * panel's top edge at the bottom of the gold band, which leaves the tails
+   * draping over the panel — the way the ribbon reads as pinned to the card
+   * rather than floating above it. The panel needs enough `pt-*` to clear them.
+   */
+  .cr-ribbon-overlap {
+    position: relative;
+    z-index: 10;
+    margin-bottom: calc(var(--ribbon-band) - var(--ribbon-h));
+  }
+
+  /*
+   * Gold plaque — a chamfered Clash-style banner for engraving one name.
+   *
+   * Two nested elements: the wrapper paints the dark outer rim and casts the
+   * shadow, the inner face carries the gold. Both are chamfered with `clip-path`,
+   * since a border can't follow a clipped edge — which is also why the rim is a
+   * padded parent rather than a `border` on the face itself.
+   */
+  .gold-banner-wrapper {
+    /* Depth of the angled ends, and the rim thickness around the gold face. */
+    --plaque-notch: 22px;
+    --plaque-rim: 6px;
+
+    /* Hugs its content and self-centers; add `w-full max-w-…` to stretch it. */
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: var(--plaque-rim);
+    background: linear-gradient(to bottom, #f0ae1a 0%, #a55600 55%, #6e3400 100%);
+    clip-path: polygon(
+      var(--plaque-notch) 0%,
+      calc(100% - var(--plaque-notch)) 0%,
+      100% 50%,
+      calc(100% - var(--plaque-notch)) 100%,
+      var(--plaque-notch) 100%,
+      0% 50%
+    );
+    /* A hard offset shadow for the stacked-metal look, then a soft one for lift.
+       `filter` traces the clipped silhouette; `box-shadow` would square it off. */
+    filter: drop-shadow(0 3px 0 #5a2a00) drop-shadow(0 6px 10px rgb(0 0 0 / 0.3));
+  }
+
+  .gold-banner {
+    /* Clear the angled ends — the chamfer eats into the corners. */
+    padding: 0.7rem calc(var(--plaque-notch) + 1.5rem);
+    background:
+      /* Gloss across the top third. */
+      linear-gradient(to bottom, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0) 42%),
+      /* The gold itself. */ linear-gradient(to bottom, #ffdd43 0%, #fbc216 58%, #e08c08 100%);
+    /* Horizontal insets only: a side inset would draw a vertical bar straight
+       across the chamfer instead of following it. */
+    box-shadow:
+      inset 0 3px 0 #fff2a8,
+      inset 0 -4px 0 #b35e00;
+    /* Pulled in from the wrapper's notch so the rim keeps an even thickness
+       around the angled ends instead of pinching at the points. */
+    clip-path: polygon(
+      calc(var(--plaque-notch) - 2px) 0%,
+      calc(100% - var(--plaque-notch) + 2px) 0%,
+      100% 50%,
+      calc(100% - var(--plaque-notch) + 2px) 100%,
+      calc(var(--plaque-notch) - 2px) 100%,
+      0% 50%
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    /* Fixed cream-on-gold. The thin brown outline holds the letterforms against
+       the bright gold; the 3px drop underneath gives the text its stamped depth. */
+    color: #ffffff;
+    text-shadow:
+      0 -1px 0 #ffeb80,
+      1px 0 0 #8a4200,
+      -1px 0 0 #8a4200,
+      0 3px 0 #672f00;
+  }
+
+  /* Rotated gem stud for the plaque's ends. */
+  .gold-banner-gem {
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    rotate: 45deg;
+    border: 2px solid #fff6a1;
+    border-radius: 0.125rem;
+    background: linear-gradient(to bottom right, #ffe76a, #f7b013 55%, #8d3e00);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.35);
+  }
+
+  /*
+   * Apex Predator hero — the landing page's one big moment: Clash key art in a
+   * letterboxed band with the champion's name burning through it in gold.
+   *
+   * `min-height` rather than `aspect-ratio` because the name is user data. A
+   * fixed ratio would make a long name overflow the crop; a floor lets the band
+   * grow instead. The art is an absolutely-positioned layer rather than a
+   * `background-image` so it can be a real <img> — that gets it lazy-loading,
+   * decoding hints, and a spot in the preload scanner.
+   *
+   * Fixed dark palette in both themes: this is a photograph, not a panel, and
+   * the scrim below is tuned against the artwork rather than against a surface.
+   */
+  .cr-hero {
+    --hero-min-h: 300px;
+
+    position: relative;
+    /* Traps the art and scrim (negative z-index) between the hero's own
+       background and its content instead of dropping them behind the page. */
+    isolation: isolate;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--hero-min-h);
+    padding: 2rem 1.25rem 1.75rem;
+
+    border: 3px solid var(--cr-outline);
+    border-radius: 18px;
+    /* Shows through anywhere the art hasn't decoded yet — a navy hole rather
+       than a white flash. */
+    background: var(--color-navy);
+    box-shadow:
+      0 5px 0 rgb(6 20 44 / 0.3),
+      0 16px 34px rgb(6 20 44 / 0.45);
+  }
+
+  @media (width >= 40rem) {
+    .cr-hero {
+      --hero-min-h: 380px;
+      padding: 2.5rem 2rem 2.25rem;
+    }
+  }
+
+  .cr-hero-art {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The source is 16:9 and this band is wider than that, so the crop is
+       vertical. Biased upward to keep both kings' crowns in frame — a centered
+       crop decapitates them and lands on the troop scrum instead. */
+    object-position: center 26%;
+  }
+
+  /*
+   * Scrim. Two passes doing different jobs: a radial pool that darkens the
+   * middle so the nameplate has something to sit on, and a linear pass that
+   * weights the top and bottom edges so the band reads as lit rather than as a
+   * photo someone dimmed uniformly.
+   */
+  .cr-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(
+        75% 62% at 50% 50%,
+        rgb(3 9 24 / 0.86) 0%,
+        rgb(3 9 24 / 0.5) 52%,
+        rgb(3 9 24 / 0) 80%
+      ),
+      linear-gradient(
+        to bottom,
+        rgb(3 9 24 / 0.5) 0%,
+        rgb(3 9 24 / 0.12) 26%,
+        rgb(3 9 24 / 0.18) 60%,
+        rgb(3 9 24 / 0.72) 100%
+      );
+  }
+
+  /*
+   * Animated gold nameplate. Two layers of the same string:
+   *
+   *   - the element itself is the dark silhouette — filled AND stroked in the
+   *     outline color so it reads as one fat shape, with a hard offset copy
+   *     under it for the stamped depth every title on this site has;
+   *   - `::after` re-draws the string on top, filled with a gold ramp clipped to
+   *     the glyphs, plus a specular band that sweeps across on a loop.
+   *
+   * Gold on `::after` rather than the element (with the outline on `::before`)
+   * because `background-clip: text` paints in the *background* phase, which
+   * comes before negative-z-index children — a `::before` outline would land on
+   * top of the gold. A positioned `::after` with no z-index paints after the
+   * element's own text, which is exactly the order wanted, with no stacking
+   * context to keep in sync.
+   *
+   * The string is duplicated into `data-name` for `content: attr()`. Both copies
+   * inherit the same font and box, so they wrap and center identically.
+   */
+  .cr-gold-name {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    /* Player names are length-capped in game, but nothing here guarantees the
+       column is wide enough for one — break rather than spill past the crop. */
+    overflow-wrap: anywhere;
+
+    color: var(--cr-outline);
+    -webkit-text-fill-color: var(--cr-outline);
+    -webkit-text-stroke: 0.09em var(--cr-outline);
+    paint-order: stroke fill;
+    text-shadow:
+      0 0.06em 0 var(--cr-outline),
+      0 0.11em 0.16em rgb(0 0 0 / 0.55);
+  }
+
+  .cr-gold-name::after {
+    content: attr(data-name);
+    position: absolute;
+    inset: 0;
+
+    background-image:
+      /* Specular band, the part that moves. */
+      linear-gradient(
+        104deg,
+        rgb(255 255 255 / 0) 42%,
+        rgb(255 255 255 / 0.9) 50%,
+        rgb(255 255 255 / 0) 58%
+      ),
+      /* The gold plate underneath, same ramp as `.gold-banner`'s face. */
+        linear-gradient(to bottom, #fff6c9 2%, #ffd644 32%, #f4a70b 60%, #c37905 82%, #ffe98a 100%);
+    background-repeat: no-repeat;
+    /*
+     * The band's layer is 3× the box, with the band centered in it — so at
+     * `background-position: 0` the band sits at 150% (off the right edge) and at
+     * `100%` it sits at −50% (off the left). Animating 100% → 0 therefore
+     * sweeps it left to right across the glyphs exactly once.
+     */
+    background-size:
+      300% 100%,
+      100% 100%;
+    background-position:
+      0 0,
+      0 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+
+    animation: cr-gold-sweep 5s ease-in-out infinite;
+  }
+
+  /* Most of the cycle is the hold at the end — a glint every few seconds reads
+     as precious metal; a continuous sweep reads as a loading skeleton. */
+  @keyframes cr-gold-sweep {
+    0% {
+      background-position:
+        100% 0,
+        0 0;
+    }
+    38%,
+    100% {
+      background-position:
+        0 0,
+        0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cr-gold-name::after {
+      animation: none;
+    }
+  }
+
+  /*
+   * Says what the name below it won, and nothing else. Deliberately the quietest
+   * thing in the band: a banner or plaque here would be a second gold object
+   * arguing with the nameplate, and the nameplate is the whole point. Wide
+   * letterspacing and caps do the "award title" work that the ornament was
+   * doing, at a weight that stays subordinate.
+   */
+  .cr-hero-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    /* Tracking adds space after the last glyph too; pull it back so the block
+       stays optically centered under the name. */
+    text-indent: 0.22em;
+    text-transform: uppercase;
+    color: #ffd54a;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 0.75);
+    margin-bottom: 0.6rem;
+  }
+
+  @media (width >= 40rem) {
+    .cr-hero-eyebrow {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  /* Plain gap under the name — nothing overlaps it. */
+  .cr-hero-medals {
+    margin-top: 0.9rem;
+    padding: 0.4rem 0.7rem;
+    font-size: 1rem;
+  }
+}
+
+@layer utilities {
+  .text-outline-black {
+    -webkit-text-stroke: 0.03rem #000000;
+    text-shadow: 0 4px 0 #000000;
+  }
+  .text-outline-white {
+    -webkit-text-stroke: 0.03rem #ffffff;
+    text-shadow: 0 4px 0 rgb(0 0 0 / 0.5);
   }
 }

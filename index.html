@@ -16,6 +16,15 @@
         if (localStorage.theme === "dark") document.documentElement.classList.add("dark");
       } catch {}
     </script>
+    <!-- Bold is the weight every title uses, so fetch it alongside the CSS rather
+         than waiting for the stylesheet to parse and discover it. -->
+    <link
+      rel="preload"
+      href="/fonts/Clash-Bold.otf"
+      as="font"
+      type="font/otf"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <div id="root"></div>
