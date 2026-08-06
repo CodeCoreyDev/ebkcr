@@ -54,12 +54,14 @@ function ApexPredator({ war }: { war: RecentWar }) {
         fetchPriority="high"
       />
 
+      {/* Above the name, not below it: the award frames the winner, and reading
+          the biggest text on the page before knowing what it won is backwards. */}
+      <p className="cr-hero-eyebrow">Apex Predator</p>
+
       {/* `data-name` feeds the gold layer's `content: attr()`; see `.cr-gold-name`. */}
       <h1 className="cr-gold-name text-[clamp(2.25rem,9vw,4.5rem)]" data-name={champ.name}>
         {champ.name}
       </h1>
-
-      <div className="cr-ribbon">APEX PREDATOR</div>
 
       <span className="cr-chip cr-chip-gold cr-hero-medals">
         {formatNumber(champ.medals)} medals

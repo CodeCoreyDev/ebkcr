@@ -563,7 +563,7 @@ html.dark {
    * reads as "same badge, slightly paler" instead of as a different metal.
    */
   .cr-place-gold {
-    border-color: color-mix(in srgb, var(--item-lip) 62%, #000)
+    border-color: color-mix(in srgb, var(--item-lip) 62%, #000);
   }
 
   .cr-place-silver {
@@ -898,10 +898,6 @@ html.dark {
    */
   .cr-hero {
     --hero-min-h: 300px;
-    /* Lives here rather than on `.cr-ribbon` so the medal chip below can derive
-       its own overlap from the same number — custom properties only inherit
-       downward, and the chip is the ribbon's sibling, not its child. */
-    --hero-ribbon-h: 84px;
 
     position: relative;
     /* Traps the art and scrim (negative z-index) between the hero's own
@@ -929,7 +925,6 @@ html.dark {
   @media (width >= 40rem) {
     .cr-hero {
       --hero-min-h: 380px;
-      --hero-ribbon-h: 100px;
       padding: 2.5rem 2rem 2.25rem;
     }
   }
@@ -1075,29 +1070,37 @@ html.dark {
     }
   }
 
-  /* The ribbon rides just under the name. Sized down from the default so it
-     reads as the champion's title rather than as a section header. */
-  .cr-hero .cr-ribbon {
-    --ribbon-h: var(--hero-ribbon-h);
-    margin-top: 0.35rem;
-    font-size: 1.15rem;
+  /*
+   * Says what the name below it won, and nothing else. Deliberately the quietest
+   * thing in the band: a banner or plaque here would be a second gold object
+   * arguing with the nameplate, and the nameplate is the whole point. Wide
+   * letterspacing and caps do the "award title" work that the ornament was
+   * doing, at a weight that stays subordinate.
+   */
+  .cr-hero-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    /* Tracking adds space after the last glyph too; pull it back so the block
+       stays optically centered under the name. */
+    text-indent: 0.22em;
+    text-transform: uppercase;
+    color: #ffd54a;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 0.75);
+    margin-bottom: 0.6rem;
   }
 
   @media (width >= 40rem) {
-    .cr-hero .cr-ribbon {
-      font-size: 1.4rem;
+    .cr-hero-eyebrow {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
     }
   }
 
-  /*
-   * Medal count, pulled up into the ribbon's tail area. Everything below the
-   * gold band is tails and drop shadow — mostly transparent — so laying it out
-   * as a solid block leaves a hole. Recreating the ribbon's own `97/170` band
-   * fraction claws that space back, then `1.25rem` is the gap that's actually
-   * wanted between the band's bottom edge and the chip.
-   */
+  /* Plain gap under the name — nothing overlaps it. */
   .cr-hero-medals {
-    margin-top: calc(var(--hero-ribbon-h) * 97 / 170 - var(--hero-ribbon-h) + 1.25rem);
+    margin-top: 0.9rem;
     padding: 0.4rem 0.7rem;
     font-size: 1rem;
   }
