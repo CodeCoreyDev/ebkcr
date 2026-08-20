@@ -47,7 +47,7 @@ function ApexPredator({ war }: { war: RecentWar }) {
           information the text doesn't. Eager + high priority since this is the
           largest paint above the fold. */}
       <img
-        src="/hero-1.webp"
+        src="/hero-2.png"
         alt=""
         aria-hidden="true"
         className="cr-hero-art"
